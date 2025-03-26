@@ -7,13 +7,23 @@ const preferredDeviceStorageName = "preferredDevice";
 
 export function useDevices() {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(0);
+  const [selectedDeviceIndex, _setSelectedDeviceIndex] = useState(0);
   const [cameraSettings, setCameraSettings] = useAtom(cameraSettingsAtom);
   const currentSettings = {
     ...defaultCameraSettings,
     ...cameraSettings[devices[selectedDeviceIndex]?.deviceId],
   };
   const [stream, setStream] = useState<MediaStream | null>(null);
+
+  function setSelectedDeviceIndex(index: number) {
+    _setSelectedDeviceIndex(index);
+    localStorage.setItem(
+      preferredDeviceStorageName,
+      devices[index]?.deviceId ||
+        localStorage.getItem(preferredDeviceStorageName) ||
+        "",
+    );
+  }
 
   const selectedDeviceId = devices[selectedDeviceIndex]?.deviceId;
 
